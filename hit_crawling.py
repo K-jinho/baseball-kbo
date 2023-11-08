@@ -16,9 +16,7 @@ conn = mysql.connector.connect(
 # 커서 생성
 cursor = conn.cursor()
 
-# 기존 데이터 삭제
-delete_query = "DELETE FROM hitter_stat"
-cursor.execute(delete_query)
+
 
 # Selenium 웹 드라이버 초기화
 driver = webdriver.Chrome()
@@ -31,16 +29,17 @@ driver.get(url)
 
 time.sleep(5)
 
-# 1. 년도 선택
-year_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlSeason_ddlSeason"))
-year_select.select_by_visible_text("2022")  # 원하는 년도 선택
-
-time.sleep(3)
-
-# 2. 시즌 선택                                      
+# 1. 시즌 선택
 season_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlSeries_ddlSeries"))
 season_select.select_by_visible_text("KBO 정규시즌")  # 원하는 시즌 선택
 
+time.sleep(5)
+
+# 2. 년도 선택                                      
+year_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlSeason_ddlSeason"))
+year_select.select_by_visible_text("2022")  # 원하는 년도 선택
+
+time.sleep(5)
 
 # 데이터 추출 및 MySQL에 저장
 table = driver.find_element(By.CLASS_NAME, 'record_result')
