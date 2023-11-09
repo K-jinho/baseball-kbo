@@ -31,19 +31,27 @@ time.sleep(5)
 season_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlSeries_ddlSeries"))
 season_select.select_by_visible_text("KBO 정규시즌")  # 원하는 시즌 선택
 
-time.sleep(5)
+time.sleep(3)
 
 # 2. 년도 선택                                      
 year_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlSeason_ddlSeason"))
 year_select.select_by_visible_text("2022")  # 원하는 년도 선택
 
-time.sleep(5)
+time.sleep(3)
 
 # 3. 팀 선택
 team_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlTeam_ddlTeam"))
 team_select.select_by_visible_text("두산")  # 원하는 팀 선택
 
-time.sleep(5)
+time.sleep(3)
+
+# 4. 페이지 변경 (페이지 번호를 원하는 페이지로 변경)
+page_element = driver.find_element(By.XPATH, "//a[@id='cphContents_cphContents_cphContents_ucPager_btnNo2']")
+page_element.click()
+
+time.sleep(3)
+
+
 
 # 데이터 추출 및 MySQL에 저장
 table = driver.find_element(By.CLASS_NAME, 'record_result')
@@ -51,10 +59,10 @@ soup = BeautifulSoup(table.get_attribute('outerHTML'), 'html.parser')
 
 for row in soup.find_all('tr')[1:]:
     columns = row.find_all('td')
-    if len(columns) >= 15:  # Ensure the correct number of columns
+    if len(columns) >= 16:  # Ensure the correct number of columns
         player_name = columns[1].text.strip()
         team = columns[2].text.strip()
-        avg = float(columns[3].text.strip())
+        avg = float(columns[3].text.strip()) if columns[3].text.strip() != '-' else 0.0
         g = int(columns[4].text.strip())
         pa = int(columns[5].text.strip())
         ab = int(columns[6].text.strip())
