@@ -16,8 +16,6 @@ conn = mysql.connector.connect(
 # 커서 생성
 cursor = conn.cursor()
 
-
-
 # Selenium 웹 드라이버 초기화
 driver = webdriver.Chrome()
 
@@ -41,14 +39,19 @@ year_select.select_by_visible_text("2022")  # 원하는 년도 선택
 
 time.sleep(5)
 
+# 3. 팀 선택
+team_select = Select(driver.find_element(By.ID, "cphContents_cphContents_cphContents_ddlTeam_ddlTeam"))
+team_select.select_by_visible_text("두산")  # 원하는 팀 선택
+
+time.sleep(5)
+
 # 데이터 추출 및 MySQL에 저장
 table = driver.find_element(By.CLASS_NAME, 'record_result')
 soup = BeautifulSoup(table.get_attribute('outerHTML'), 'html.parser')
 
 for row in soup.find_all('tr')[1:]:
     columns = row.find_all('td')
-    if len(columns) >= 16:  # Ensure the correct number of columns
-        rank = columns[0].text.strip()
+    if len(columns) >= 15:  # Ensure the correct number of columns
         player_name = columns[1].text.strip()
         team = columns[2].text.strip()
         avg = float(columns[3].text.strip())
@@ -66,8 +69,9 @@ for row in soup.find_all('tr')[1:]:
         sf = int(columns[15].text.strip())
 
         # 데이터를 MySQL에 저장
-        insert_query = "INSERT INTO hitter_stat (ht_Rank, ht_Playername, ht_Teamname, ht_AVG, ht_G, ht_PA, ht_AB, ht_R, ht_H, ht_2B, ht_3B, ht_HR, ht_TB, ht_RBI, ht_SAC, ht_SF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        data = (rank, player_name, team, avg, g, pa, ab, r, h, doubles, triples, hr, tb, rbi, sac, sf)
+        insert_query = "INSERT INTO regular_2022_hitter (ht_Playername, ht_Teamname, ht_AVG, ht_G, ht_PA, ht_AB, ht_R, ht_H, ht_2B, ht_3B, ht_HR, ht_TB, ht_RBI, ht_SAC, ht_SF) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE ht_Playername=ht_Playername"
+
+        data = (player_name, team, avg, g, pa, ab, r, h, doubles, triples, hr, tb, rbi, sac, sf)
         cursor.execute(insert_query, data)
 
 # 변경사항을 커밋하고 연결 종료
