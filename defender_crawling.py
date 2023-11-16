@@ -8,10 +8,10 @@ import time
 for i in range(1, 5):
     # MySQL 연결 설정
     conn = mysql.connector.connect(
-        user="root",
-        password="12345678",
+        user="your ID",
+        password="Your pwd",
         host="localhost",
-        database="baseball_stat"
+        database="Your DB"
     )
 
     # 커서 생성
