@@ -6,11 +6,11 @@ from bs4 import BeautifulSoup
 import time
 
 # MySQL 연결 설정
-conn = mysql.connector.connect(
-    user="root",
-    password="12345678",
-    host="localhost",
-    database="baseball_stat"
+cconn = mysql.connector.connect(
+        user="your ID",
+        password="Your pwd",
+        host="localhost",
+        database="Your DB"
 )
 
 # 커서 생성
